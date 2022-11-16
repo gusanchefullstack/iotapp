@@ -1,0 +1,25 @@
+{
+  "name": "iotapp",
+  "version": "1.0.0",
+  "description": "IoT API using Express.js and prisma.io",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gusanchefullstack/iotapp.git"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "prisma",
+    "iot"
+  ],
+  "author": "Gustavo Sanchez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gusanchefullstack/iotapp/issues"
+  },
+  "homepage": "https://github.com/gusanchefullstack/iotapp#readme"
+}
