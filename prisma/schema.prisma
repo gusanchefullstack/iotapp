@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id   String @id @default(uuid())
+  name String @unique
+  nit  String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Site {
+  id      String @id @default(uuid())
+  name    String
+  address String
+  city    String
+  zipcode String
+  country String
+  phone   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MeasuringPoint {
+  id   String  @id @default(uuid())
+  name String
+  lat  Decimal
+  lng  Decimal
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Board {
+  id   String @id @default(uuid())
+  name String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Sensor {
+  id   String @id @default(uuid())
+  name String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id  String @id @default(uuid())
+  name  String
+  username  String
+  password  String
+  email String?
+  phone String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
