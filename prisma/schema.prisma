@@ -11,61 +11,117 @@ datasource db {
 }
 
 model Organization {
-  id   String @id @default(uuid())
-  name String @unique
-  nit  String @unique
+  id        String     @id @default(uuid())
+  name      String     @unique
+  nit       String     @unique
+  phone     String?
+  address   String?
+  users     User[]
+  contracts Contract[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Contract {
+  id             String       @id @default(uuid())
+  subscription   String
+  starDate       DateTime
+  endDate        DateTime
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  sites          Site[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Site {
-  id      String @id @default(uuid())
-  name    String
-  address String
-  city    String
-  zipcode String
-  country String
-  phone   String
+  id              String           @id @default(uuid())
+  name            String
+  address         String
+  city            String
+  zipcode         String
+  country         String
+  phone           String
+  contractId      String
+  contract        Contract         @relation(fields: [contractId], references: [id])
+  measuringPoints MeasuringPoint[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model MeasuringPoint {
-  id   String  @id @default(uuid())
-  name String
-  lat  Decimal
-  lng  Decimal
+  id         String  @id @default(uuid())
+  name       String
+  lat        Decimal
+  lng        Decimal
+  siteId     String
+  parentSite Site    @relation(fields: [siteId], references: [id])
+  boards     Board[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Board {
-  id   String @id @default(uuid())
-  name String
+  id              String         @id @default(uuid())
+  name            String
+  pointId         String
+  hardwareVersion String?
+  softwareVersion String?
+  measuringpoint  MeasuringPoint @relation(fields: [pointId], references: [id])
+  status          Status         @default(ACTIVE)
+  sensors         Sensor[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Sensor {
-  id   String @id @default(uuid())
-  name String
+  id          String     @id @default(uuid())
+  name        String
+  boardId     String
+  sensorType  SensorType
+  motherBoard Board      @relation(fields: [boardId], references: [id])
+  status      Status     @default(CREATED)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model User {
-  id  String @id @default(uuid())
-  name  String
-  username  String
-  password  String
-  email String?
-  phone String?
-  
+  id             String       @id @default(uuid())
+  name           String
+  username       String
+  password       String
+  email          String?
+  phone          String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  role           Role         @default(ADMINISTRATOR)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum Status {
+  CREATED
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum Role {
+  ADMINISTRATOR
+  SUPERVISOR
+  OPERATOR
+}
+
+enum SensorType {
+  TEMPERATURE
+  HUMIDITY
+  PH
+  FLOW
 }

@@ -19,6 +19,23 @@ router.delete("/organization/:id", (req, res) => {
   res.json({ message: "organization delete response" });
 });
 
+// Contract Routes
+router.get("/contract", (req, res) => {
+  res.json({ message: "all contracts" });
+});
+router.get("/contract/:id", (req, res) => {
+  res.json({ message: "one contract" });
+});
+router.post("/contract", (req, res) => {
+  res.json({ message: "contract create response" });
+});
+router.put("/contract/:id", (req, res) => {
+  res.json({ message: "contract update response" });
+});
+router.delete("/contract/:id", (req, res) => {
+  res.json({ message: "contract delete response" });
+});
+
 // Sites Routes
 router.get("/site", (req, res) => {
   res.json({ message: "all site" });
