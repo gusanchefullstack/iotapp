@@ -53,13 +53,13 @@ model Site {
 }
 
 model MeasuringPoint {
-  id         String  @id @default(uuid())
-  name       String
-  lat        Decimal
-  lng        Decimal
-  siteId     String
-  parentSite Site    @relation(fields: [siteId], references: [id])
-  boards     Board[]
+  id     String  @id @default(uuid())
+  name   String
+  lat    Decimal
+  lng    Decimal
+  siteId String
+  site   Site    @relation(fields: [siteId], references: [id])
+  boards Board[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
