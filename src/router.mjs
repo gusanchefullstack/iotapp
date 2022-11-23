@@ -383,12 +383,7 @@ router.post(
     .isLength({ min: 3, max: 10 })
     .withMessage("Invalid length")
     .trim(),
-  oneOf([
-    body("status").exists().equals("CREATED"),
-    body("status").exists().equals("ACTIVE"),
-    body("status").exists().equals("SUSPENDED"),
-    body("status").exists().equals("DELETED"),
-  ]),
+  body("status").exists().isIn(["CREATED", "ACTIVE", "SUSPENDED", "DELETED"]),
   handleInputErrors,
   (req, res) => {
     res.json({ message: "board create response" });
@@ -418,12 +413,7 @@ router.put(
     .isLength({ min: 3, max: 10 })
     .withMessage("Invalid length")
     .trim(),
-  oneOf([
-    body("status").optional().equals("CREATED"),
-    body("status").optional().equals("ACTIVE"),
-    body("status").optional().equals("SUSPENDED"),
-    body("status").optional().equals("DELETED"),
-  ]),
+  body("status").optional().isIn(["CREATED", "ACTIVE", "SUSPENDED", "DELETED"]),
   handleInputErrors,
   (req, res) => {
     res.json({ message: "board update response" });
@@ -460,18 +450,8 @@ router.post(
     .isLength({ min: 3, max: 255 })
     .withMessage("Invalid length")
     .trim(),
-  oneOf([
-    body("sensorType").exists().equals("TEMPERATURE"),
-    body("sensorType").exists().equals("HUMIDITY"),
-    body("sensorType").exists().equals("PH"),
-    body("sensorType").exists().equals("FLOW"),
-  ]),
-  oneOf([
-    body("status").exists().equals("CREATED"),
-    body("status").exists().equals("ACTIVE"),
-    body("status").exists().equals("SUSPENDED"),
-    body("status").exists().equals("DELETED"),
-  ]),
+  body("sensorType").exists().isIn(["TEMPERATURE", "HUMIDITY", "PH", "FLOW"]),
+  body("status").exists().isIn(["CREATED", "ACTIVE", "SUSPENDED", "DELETED"]),
   handleInputErrors,
   (req, res) => {
     res.json({ message: "sensor create response" });
@@ -487,18 +467,8 @@ router.put(
     .isLength({ min: 3, max: 255 })
     .withMessage("Invalid length")
     .trim(),
-  oneOf([
-    body("sensorType").optional().equals("TEMPERATURE"),
-    body("sensorType").optional().equals("HUMIDITY"),
-    body("sensorType").optional().equals("PH"),
-    body("sensorType").optional().equals("FLOW"),
-  ]),
-  oneOf([
-    body("status").optional().equals("CREATED"),
-    body("status").optional().equals("ACTIVE"),
-    body("status").optional().equals("SUSPENDED"),
-    body("status").optional().equals("DELETED"),
-  ]),
+  body("sensorType").optional().isIn(["TEMPERATURE", "HUMIDITY", "PH", "FLOW"]),
+  body("status").optional().isIn(["CREATED", "ACTIVE", "SUSPENDED", "DELETED"]),
   handleInputErrors,
   (req, res) => {
     res.json({ message: "sensor update response" });
