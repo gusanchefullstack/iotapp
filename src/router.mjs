@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { body, param, validationResult } from "express-validator";
+import { body, param, oneOf } from "express-validator";
 import { handleInputErrors } from "./modules/middleware.mjs";
 
 const router = Router();
@@ -139,6 +139,7 @@ router.post(
 );
 router.put(
   "/contract/:id",
+  param("id").isUUID().withMessage("Invalid format"),
   body("subscription")
     .optional()
     .isString()
@@ -227,6 +228,7 @@ router.post(
 );
 router.put(
   "/site/:id",
+  param("id").isUUID().withMessage("Invalid format"),
   body("name")
     .optional()
     .isString()
@@ -291,12 +293,49 @@ router.get(
     res.json({ message: "one measuringpoint" });
   }
 );
-router.post("/measuringpoint", (req, res) => {
-  res.json({ message: "measuringpoint create response" });
-});
-router.put("/measuringpoint/:id", (req, res) => {
-  res.json({ message: "measuringpoint update response" });
-});
+router.post(
+  "/measuringpoint",
+  body("name")
+    .exists()
+    .withMessage("Missing value")
+    .isString()
+    .withMessage("Invalid format")
+    .isLength({ min: 3, max: 255 })
+    .withMessage("Invalid length")
+    .trim(),
+  body("lat")
+    .exists()
+    .withMessage("Missing value")
+    .isDecimal()
+    .withMessage("Invalid format")
+    .trim(),
+  body("lng")
+    .exists()
+    .withMessage("Missing value")
+    .isDecimal()
+    .withMessage("Invalid format"),
+  handleInputErrors,
+  (req, res) => {
+    res.json({ message: "measuringpoint create response" });
+  }
+);
+router.put(
+  "/measuringpoint/:id",
+  param("id").isUUID().withMessage("Invalid format"),
+  body("name")
+    .optional()
+    .isString()
+    .withMessage("Invalid format")
+    .isLength({ min: 3, max: 255 })
+    .withMessage("Invalid length")
+    .trim(),
+  body("lat").optional().isDecimal().withMessage("Invalid format").trim(),
+  body("lng").optional().isDecimal().withMessage("Invalid format"),
+  handleInputErrors,
+  (req, res) => {
+    res.json({ message: "measuringpoint update response" });
+  }
+);
 router.delete(
   "/measuringpoint/:id",
   param("id").isUUID().withMessage("Invalid format"),
@@ -318,12 +357,78 @@ router.get(
     res.json({ message: "one board" });
   }
 );
-router.post("/board", (req, res) => {
-  res.json({ message: "board create response" });
-});
-router.put("/board/:id", (req, res) => {
-  res.json({ message: "board update response" });
-});
+router.post(
+  "/board",
+  body("name")
+    .exists()
+    .withMessage("Missing value")
+    .isString()
+    .withMessage("Invalid format")
+    .isLength({ min: 3, max: 255 })
+    .withMessage("Invalid length")
+    .trim(),
+  body("hardwareVersion")
+    .exists()
+    .withMessage("Missing value")
+    .isString()
+    .withMessage("Invalid format")
+    .isLength({ min: 3, max: 10 })
+    .withMessage("Invalid length")
+    .trim(),
+  body("softwareVersion")
+    .exists()
+    .withMessage("Missing value")
+    .isString()
+    .withMessage("Invalid format")
+    .isLength({ min: 3, max: 10 })
+    .withMessage("Invalid length")
+    .trim(),
+  oneOf([
+    body("status").exists().equals("CREATED"),
+    body("status").exists().equals("ACTIVE"),
+    body("status").exists().equals("SUSPENDED"),
+    body("status").exists().equals("DELETED"),
+  ]),
+  handleInputErrors,
+  (req, res) => {
+    res.json({ message: "board create response" });
+  }
+);
+router.put(
+  "/board/:id",
+  param("id").isUUID().withMessage("Invalid format"),
+  body("name")
+    .optional()
+    .isString()
+    .withMessage("Invalid format")
+    .isLength({ min: 3, max: 255 })
+    .withMessage("Invalid length")
+    .trim(),
+  body("hardwareVersion")
+    .optional()
+    .isString()
+    .withMessage("Invalid format")
+    .isLength({ min: 3, max: 10 })
+    .withMessage("Invalid length")
+    .trim(),
+  body("softwareVersion")
+    .optional()
+    .isString()
+    .withMessage("Invalid format")
+    .isLength({ min: 3, max: 10 })
+    .withMessage("Invalid length")
+    .trim(),
+  oneOf([
+    body("status").optional().equals("CREATED"),
+    body("status").optional().equals("ACTIVE"),
+    body("status").optional().equals("SUSPENDED"),
+    body("status").optional().equals("DELETED"),
+  ]),
+  handleInputErrors,
+  (req, res) => {
+    res.json({ message: "board update response" });
+  }
+);
 router.delete(
   "/board/:id",
   param("id").isUUID().withMessage("Invalid format"),
@@ -345,12 +450,60 @@ router.get(
     res.json({ message: "one sensor" });
   }
 );
-router.post("/sensor", (req, res) => {
-  res.json({ message: "sensor create response" });
-});
-router.put("/sensor/:id", (req, res) => {
-  res.json({ message: "sensor update response" });
-});
+router.post(
+  "/sensor",
+  body("name")
+    .exists()
+    .withMessage("Missing value")
+    .isString()
+    .withMessage("Invalid format")
+    .isLength({ min: 3, max: 255 })
+    .withMessage("Invalid length")
+    .trim(),
+  oneOf([
+    body("sensorType").exists().equals("TEMPERATURE"),
+    body("sensorType").exists().equals("HUMIDITY"),
+    body("sensorType").exists().equals("PH"),
+    body("sensorType").exists().equals("FLOW"),
+  ]),
+  oneOf([
+    body("status").exists().equals("CREATED"),
+    body("status").exists().equals("ACTIVE"),
+    body("status").exists().equals("SUSPENDED"),
+    body("status").exists().equals("DELETED"),
+  ]),
+  handleInputErrors,
+  (req, res) => {
+    res.json({ message: "sensor create response" });
+  }
+);
+router.put(
+  "/sensor/:id",
+  param("id").isUUID().withMessage("Invalid format"),
+  body("name")
+    .optional()
+    .isString()
+    .withMessage("Invalid format")
+    .isLength({ min: 3, max: 255 })
+    .withMessage("Invalid length")
+    .trim(),
+  oneOf([
+    body("sensorType").optional().equals("TEMPERATURE"),
+    body("sensorType").optional().equals("HUMIDITY"),
+    body("sensorType").optional().equals("PH"),
+    body("sensorType").optional().equals("FLOW"),
+  ]),
+  oneOf([
+    body("status").optional().equals("CREATED"),
+    body("status").optional().equals("ACTIVE"),
+    body("status").optional().equals("SUSPENDED"),
+    body("status").optional().equals("DELETED"),
+  ]),
+  handleInputErrors,
+  (req, res) => {
+    res.json({ message: "sensor update response" });
+  }
+);
 router.delete(
   "/sensor/:id",
   param("id").isUUID().withMessage("Invalid format"),
