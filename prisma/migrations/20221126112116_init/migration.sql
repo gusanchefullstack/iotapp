@@ -8,12 +8,28 @@ CREATE TYPE "Role" AS ENUM ('ADMINISTRATOR', 'SUPERVISOR', 'OPERATOR');
 CREATE TYPE "SensorType" AS ENUM ('TEMPERATURE', 'HUMIDITY', 'PH', 'FLOW');
 
 -- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "email" TEXT,
+    "phone" TEXT,
+    "role" "Role" NOT NULL DEFAULT 'ADMINISTRATOR',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Organization" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "nit" TEXT NOT NULL,
     "phone" TEXT,
     "address" TEXT,
+    "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -66,9 +82,9 @@ CREATE TABLE "MeasuringPoint" (
 CREATE TABLE "Board" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "pointId" TEXT NOT NULL,
     "hardwareVersion" TEXT,
     "softwareVersion" TEXT,
+    "measuringpointId" TEXT NOT NULL,
     "status" "Status" NOT NULL DEFAULT 'ACTIVE',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -89,27 +105,17 @@ CREATE TABLE "Sensor" (
     CONSTRAINT "Sensor_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "User" (
-    "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "username" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
-    "email" TEXT,
-    "phone" TEXT,
-    "organizationId" TEXT NOT NULL,
-    "role" "Role" NOT NULL DEFAULT 'ADMINISTRATOR',
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "Organization_name_key" ON "Organization"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Organization_nit_key" ON "Organization"("nit");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Organization_userId_key" ON "Organization"("userId");
+
+-- AddForeignKey
+ALTER TABLE "Organization" ADD CONSTRAINT "Organization_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Contract" ADD CONSTRAINT "Contract_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -121,10 +127,7 @@ ALTER TABLE "Site" ADD CONSTRAINT "Site_contractId_fkey" FOREIGN KEY ("contractI
 ALTER TABLE "MeasuringPoint" ADD CONSTRAINT "MeasuringPoint_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Board" ADD CONSTRAINT "Board_pointId_fkey" FOREIGN KEY ("pointId") REFERENCES "MeasuringPoint"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Board" ADD CONSTRAINT "Board_measuringpointId_fkey" FOREIGN KEY ("measuringpointId") REFERENCES "MeasuringPoint"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Sensor" ADD CONSTRAINT "Sensor_boardId_fkey" FOREIGN KEY ("boardId") REFERENCES "Board"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

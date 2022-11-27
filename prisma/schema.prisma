@@ -10,13 +10,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id       String  @id @default(uuid())
+  name     String
+  username String @unique
+  password String
+  email    String? @unique
+  phone    String?
+  role     Role    @default(ADMINISTRATOR)
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  organization Organization?
+}
+
 model Organization {
   id        String     @id @default(uuid())
   name      String     @unique
   nit       String     @unique
   phone     String?
   address   String?
-  users     User[]
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id])
   contracts Contract[]
 
   createdAt DateTime @default(now())
@@ -66,14 +81,14 @@ model MeasuringPoint {
 }
 
 model Board {
-  id              String         @id @default(uuid())
-  name            String
-  pointId         String
-  hardwareVersion String?
-  softwareVersion String?
-  measuringpoint  MeasuringPoint @relation(fields: [pointId], references: [id])
-  status          Status         @default(ACTIVE)
-  sensors         Sensor[]
+  id               String         @id @default(uuid())
+  name             String
+  hardwareVersion  String?
+  softwareVersion  String?
+  measuringpointId String
+  measuringpoint   MeasuringPoint @relation(fields: [measuringpointId], references: [id])
+  status           Status         @default(ACTIVE)
+  sensors          Sensor[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -86,21 +101,6 @@ model Sensor {
   sensorType  SensorType
   motherBoard Board      @relation(fields: [boardId], references: [id])
   status      Status     @default(CREATED)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model User {
-  id             String       @id @default(uuid())
-  name           String
-  username       String
-  password       String
-  email          String?
-  phone          String?
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  role           Role         @default(ADMINISTRATOR)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

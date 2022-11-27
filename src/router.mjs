@@ -1,20 +1,23 @@
 import { Router } from "express";
-import { body, param, oneOf } from "express-validator";
+import { body, param } from "express-validator";
+import {
+  getOrganizations,
+  getOneOrganization,
+  createOrganization,
+  updateOrganization,
+} from "./handlers/organization.mjs";
 import { handleInputErrors } from "./modules/middleware.mjs";
 
 const router = Router();
 
 // Organization Routes
-router.get("/organization", (req, res) => {
-  res.json({ message: "all organizations" });
-});
+router.get("/organization", getOrganizations);
+
 router.get(
   "/organization/:id",
   param("id").isUUID().withMessage("Invalid format"),
   handleInputErrors,
-  (req, res) => {
-    res.json({ message: "one organization" });
-  }
+  getOneOrganization
 );
 router.post(
   "/organization",
@@ -49,9 +52,7 @@ router.post(
     .withMessage("Invalid length")
     .trim(),
   handleInputErrors,
-  (req, res) => {
-    res.json({ message: "organization create response" });
-  }
+  createOrganization
 );
 router.put(
   "/organization/:id",
@@ -85,9 +86,7 @@ router.put(
     .withMessage("Invalid length")
     .trim(),
   handleInputErrors,
-  (req, res) => {
-    res.json({ message: `organization update response` });
-  }
+  updateOrganization
 );
 router.delete(
   "/organization/:id",
